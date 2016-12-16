@@ -1,0 +1,6 @@
+# Ignoring generated files
+build/*
+.idea/*
+.gradle/*
+gradle/*
+gradlew*

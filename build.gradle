@@ -1,0 +1,68 @@
+group 'ai.zook'
+version '1.0'
+
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.0'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'io.grpc:grpc-netty:1.0.1'
+    compile 'io.grpc:grpc-protobuf:1.0.1'
+    compile 'io.grpc:grpc-stub:1.0.1'
+}
+
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.1.0"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.0.1'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
+apply plugin: 'idea'
+idea {
+    module {
+        // Not using generatedSourceDirs because of
+        // https://discuss.gradle.org/t/support-for-intellij-2016/15294/8
+        sourceDirs += file("${projectDir}/build/generated/source/proto/main/java");
+        sourceDirs += file("${projectDir}/build/generated/source/proto/main/grpc");
+    }
+}
+
+task client(type: JavaExec, dependsOn: 'classes') {
+    main = 'ai.zook.impression_hash.ImageClient'
+    classpath = sourceSets.main.runtimeClasspath
+    minHeapSize = "256m"
+    maxHeapSize = "256m"
+}
+
+task server(type: JavaExec, dependsOn: 'classes') {
+    main = 'ai.zook.impression_hash.HashServer'
+    classpath = sourceSets.main.runtimeClasspath
+    minHeapSize = "256m"
+    maxHeapSize = "256m"
+}
+
+
+
