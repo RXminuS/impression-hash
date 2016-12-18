@@ -1,0 +1,44 @@
+//This defines the schema of the image hashing
+// Author: AAAton @ Zook.ai
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "ai.zook.impression_hash";
+option java_outer_classname = "ImpressionHashProto";
+option objc_class_prefix = "IHP";
+
+package ihash;
+
+//The image hasher service definition
+service Hasher {
+    rpc ImpressionHash (HashRequest) returns (HashValue) {
+    }
+    rpc Similarity (ToCompare) returns (HashComparison) {
+    }
+}
+
+//The request containing the image to hash and its type
+message HashRequest {
+    enum Type {
+        PNG = 0;
+        JPG = 1;
+    }
+    Type type = 1;
+    bytes imageBytes = 2;
+}
+
+// The response message containing the hash
+message HashValue {
+    string hash = 1;
+}
+
+message ToCompare {
+    string first = 1;
+    string second = 2;
+}
+
+// Returns a normalized float with the similarity between the hashes.
+message HashComparison {
+    float similarity = 1;
+}
