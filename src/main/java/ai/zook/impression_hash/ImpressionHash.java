@@ -28,7 +28,7 @@ public class ImpressionHash {
         crop();
         grayScale();
         resize(dWidth, dHeight);
-//        blur();
+        blur();
         normalize();
         comparePixels();
     }
@@ -186,10 +186,10 @@ public class ImpressionHash {
         return true;
     }
 
-    private boolean withinReason(int color, int otherColor) {
-        color = color & 0xFF;
-        otherColor = otherColor & 0xFF;
-        return color < otherColor + fuzziness && color > otherColor - fuzziness;
+    private boolean withinReason(int c, int oc) {
+        c = (c & 0xFF) + (c >> 8 & 0xFF) + (c >> 16 & 0xFF) + (c >> 24 & 0xFF);
+        oc = (oc & 0xFF) + (oc >> 8 & 0xFF) + (oc >> 16 & 0xFF) + (oc >> 24 & 0xFF);
+        return c < oc + fuzziness && c > oc - fuzziness;
     }
 
     private boolean colorCanBeBorder(int color) {
