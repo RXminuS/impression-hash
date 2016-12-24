@@ -60,8 +60,8 @@ task client(type: JavaExec, dependsOn: 'classes') {
 task server(type: JavaExec, dependsOn: 'classes') {
     main = 'ai.zook.impression_hash.HashServer'
     classpath = sourceSets.main.runtimeClasspath
-    minHeapSize = "256m"
-    maxHeapSize = "256m"
+    minHeapSize = "512m"
+    maxHeapSize = "4096m"
 }
 
 

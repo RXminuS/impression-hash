@@ -28,7 +28,7 @@ public class ImpressionHash {
         crop();
         grayScale();
         resize(dWidth, dHeight);
-//        blur();
+        blur();
         normalize();
         comparePixels();
     }
@@ -54,47 +54,35 @@ public class ImpressionHash {
 
     // Better for jpgs (actual photos). Use blurring if you want to do jpgs.
     public String larger() {
-        return byteToHex(boolToByte(larger));
+        return boolToHex(larger);
     }
 
     // Better for pngs (icons, logos & vector art). Can do inverted images etc.
     public String changes() {
-        return byteToHex(boolToByte(changes));
+        return boolToHex(changes);
     }
 
+    private final String hexChars = "0123456789abcdef";
 
-    private byte[] boolToByte(boolean[] array) {
-        int move = 7;
+    private String boolToHex(boolean[] array) {
+        int move = 3;
         byte b = 0;
-        byte[] bytes = new byte[array.length / 8 + (array.length % 8 == 0 ? 0 : 1)];
+        char[] hexArray = hexChars.toCharArray();
+        char[] output = new char[array.length / 4 + (array.length % 4 == 0 ? 0 : 1)];
         for (int i = 0; i < array.length; i++) {
             int c = array[i] ? 1 : 0;
             b += c << move;
             move--;
             if (move < 0) {
-                bytes[i / 8] = b;
-                move = 7;
+                output[i / 4] = hexArray[b];
+                move = 3;
                 b = 0;
             }
         }
-        if (array.length % 8 != 0) bytes[array.length / 8] = b;
-        return bytes;
+        if (array.length % 4 != 0) output[array.length / 4] = hexArray[b];
+        return new String(output);
     }
-
-    private final String hexChars = "0123456789abcdef";
-
-    private String byteToHex(byte[] array) {
-        char[] hexArray = hexChars.toCharArray();
-        char[] hexChars = new char[array.length * 2];
-        for (int i = 0; i < array.length; i++) {
-            int v = array[i] & 0xFF;
-            char c = hexArray[v >>> 4];
-            hexChars[i * 2] = c;
-            hexChars[i * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
-
+    
     private boolean[] hexToBools(String hex) {
         char[] chars = hex.toCharArray();
         int a = 0;
@@ -186,10 +174,10 @@ public class ImpressionHash {
         return true;
     }
 
-    private boolean withinReason(int color, int otherColor) {
-        color = color & 0xFF;
-        otherColor = otherColor & 0xFF;
-        return color < otherColor + fuzziness && color > otherColor - fuzziness;
+    private boolean withinReason(int c, int oc) {
+        c = (c & 0xFF) + (c >> 8 & 0xFF) + (c >> 16 & 0xFF) + (c >> 24 & 0xFF);
+        oc = (oc & 0xFF) + (oc >> 8 & 0xFF) + (oc >> 16 & 0xFF) + (oc >> 24 & 0xFF);
+        return c < oc + fuzziness && c > oc - fuzziness;
     }
 
     private boolean colorCanBeBorder(int color) {

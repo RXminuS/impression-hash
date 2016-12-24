@@ -4,7 +4,6 @@ build/*
 .gradle/*
 gradle/*
 #gradlew*
-.dockerignore
 
 # Ignore Gradle GUI config
 gradle-app.setting
