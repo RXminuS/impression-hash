@@ -46,7 +46,7 @@ import java.io.IOException;
 public class HashServer {
 
     /* The port on which the server should run */
-    private int port = 5000;
+    private int port = 50051;
     private Server server;
 
     private void start() throws IOException {

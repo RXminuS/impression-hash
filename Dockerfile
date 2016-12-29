@@ -7,5 +7,5 @@ WORKDIR /app
 # Bundle app source
 COPY . /app
 
-EXPOSE 3000
+EXPOSE 50051
 CMD [ "gradle", "server" ]
