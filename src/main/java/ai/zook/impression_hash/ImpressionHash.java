@@ -13,20 +13,26 @@ import java.io.IOException;
  */
 public class ImpressionHash {
     private BufferedImage image;
-    // Two different comparisons. For kicks.
     private boolean[] changes;
     private boolean[] larger;
     private final int BLACK = 0;
     private final int WHITE = 255;
-    private final int dWidth = 11;
-    private final int dHeight = 10;
     private final int fuzziness = 12; // How much noise can we accept?
 
     public ImpressionHash(BufferedImage image) {
         this.image = image;
-        resize(200, 200);
+
+//        Scale down the image if it's too large so it's faster to work with
+        int pSize = 200;
+        if (image.getWidth() > pSize || image.getHeight() > pSize)
+            resize(pSize, pSize);
+
         crop();
         grayScale();
+
+//        The size of the width needs to be one larger than the intended size
+        int dWidth = 11;
+        int dHeight = 10;
         resize(dWidth, dHeight);
         blur();
         normalize();
@@ -82,7 +88,7 @@ public class ImpressionHash {
         if (array.length % 4 != 0) output[array.length / 4] = hexArray[b];
         return new String(output);
     }
-    
+
     private boolean[] hexToBools(String hex) {
         char[] chars = hex.toCharArray();
         int a = 0;
